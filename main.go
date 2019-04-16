@@ -54,7 +54,7 @@ func checkLink(link string, c chan responseInfo) {
 	}
 }
 
-func printSummary(link string, timeTaken time.Duration, summary summaryInfo) {
+func createSummary(link string, timeTaken time.Duration, totalTransferred int64, totalTimeAllRequests time.Duration, summary summaryInfo) string {
 	u, _ := url.Parse(link)
 
 	summary.DocumentPath = link
@@ -62,11 +62,15 @@ func printSummary(link string, timeTaken time.Duration, summary summaryInfo) {
 	summary.Hostname = u.Hostname()
 	summary.Port = u.Port()
 	summary.TimeTaken = timeTaken
+	summary.CompletedRequests = summary.Responded
+	summary.FailedRequests = summary.Requested - summary.Responded
+	summary.TotalTransferred = totalTransferred
+	summary.TimePerRequest = time.Duration(int64(totalTimeAllRequests) / summary.Responded)
 
 	sortedSummary, _ := json.MarshalIndent(summary, "", "\t")
 	formattedSummary := string(sortedSummary)
 
-	fmt.Println(formattedSummary)
+	return formattedSummary
 }
 
 func main() {
@@ -90,20 +94,26 @@ func main() {
 	link := flag.Arg(0)
 
 	for i := int64(0); i < *concurrency; i++ {
-		summary.Requested++
 		go checkLink(link, c)
+		summary.Requested++
 	}
 
+	totalTransferred := int64(0)
+	totalTimeAllRequests := time.Duration(0)
 	for response := range c {
 		if summary.Requested < *requests {
-			summary.Requested++
 			go checkLink(link, c)
+			summary.Requested++
 		}
-		summary.Responded++
+		totalTransferred += response.bytes
+		totalTimeAllRequests += response.duration
 		fmt.Println(response)
+		summary.Responded++
+
 		if summary.Requested == summary.Responded {
 			timeTaken := time.Now().Sub(start)
-			printSummary(link, timeTaken, summary)
+			formattedSummary := createSummary(link, timeTaken, totalTransferred, totalTimeAllRequests, summary)
+			fmt.Println(formattedSummary)
 			break
 		}
 	}
