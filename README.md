@@ -27,9 +27,9 @@
    * [x] Document Length
    * [ ] Concurrency Level
    * [x] Time taken for tests
-   * [ ] Complete requests
-   * [ ] Failed requests
-   * [ ] Total transferred
+   * [x] Complete requests
+   * [x] Failed requests
+   * [x] Total transferred
    * [ ] Requests per second
-   * [ ] Time per request
+   * [x] Time per request
    * [ ] Transfer rate
