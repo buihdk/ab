@@ -1,8 +1,7 @@
 # CoderSchool Golang Course Prework
 
 1. **Submitted by: KHOA BUI**
-2. **Time spent: 2 hours**
-3. **URL:**
+2. **Time spent: 3 hours**
 
 ## Set of user stories
 
@@ -11,10 +10,10 @@
 * [x] Input params
    * [x] Requests - Number of requests to perform
    * [x] Concurrency - Number of multiple requests to make at a time
-   * [x] URL - The URL for testing.
-* [x] Prints usage information if wrong arguments provided
-* [x] Implements HTTP load and summarize it
-* [x] Concurrency must be implemented with goroutines
+   * [x] URL - The URL for testing
+* [x] The program prints usage information if the wrong arguments are provided.
+* [x] The program performs the specified HTTP requests and prints a summary of the results.
+* [x] The program’s concurrency is implemented with goroutines.
 
 
 ### Bonus
@@ -22,16 +21,15 @@
    * [ ] Timeout - Seconds to max. wait for each response
    * [ ] Timelimit - Maximum number of seconds to spend for benchmarking
 * [ ] Prints key metrics of summary, such:
-   * [ ] Server Hostname
-   * [ ] Server Port
-   * [ ] Document Path
-   * [ ] Document Length
+   * [x] Server Hostname
+   * [x] Server Port
+   * [x] Document Path
+   * [x] Document Length
    * [ ] Concurrency Level
-   * [ ] Time taken for tests
+   * [x] Time taken for tests
    * [ ] Complete requests
    * [ ] Failed requests
    * [ ] Total transferred
    * [ ] Requests per second
-   * [ ] Time per request
    * [ ] Time per request
    * [ ] Transfer rate
