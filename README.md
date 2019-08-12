@@ -1,8 +1,7 @@
 # ab
 https://httpd.apache.org/docs/2.4/programs/ab.html
 
-1. **Submitted by: KHOA BUI**
-2. **Time spent: 3 hours**
+Run `./ab -n 100 -c 20 -s 1 -t 10 https://www.grab.com/vn`
 
 ## Set of user stories
 
