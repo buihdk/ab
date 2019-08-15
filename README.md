@@ -17,9 +17,9 @@ Run `./ab -n 100 -c 20 -s 1 -t 10 https://www.grab.com/vn`
 
 
 ### Bonus
-* [ ] Extend input params with: 
-   * [ ] Timeout - Seconds to max. wait for each response
-   * [ ] Timelimit - Maximum number of seconds to spend for benchmarking
+* [x] Extend input params with: 
+   * [x] Timeout - Seconds to max. wait for each response
+   * [x] Timelimit - Maximum number of seconds to spend for benchmarking
 * [ ] Prints key metrics of summary, such:
    * [x] Server Hostname
    * [x] Server Port
