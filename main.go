@@ -62,7 +62,7 @@ func main() {
 
 		if summary.Requested == summary.Responded {
 			timeTaken := time.Now().Sub(start)
-			formattedSummary := createSummary(link, timeTaken, totalTransferred, totalTimeAllRequests, summary)
+			formattedSummary := createSummary(link, timeTaken, totalTransferred, totalTimeAllRequests, *concurrency, summary)
 			fmt.Println(formattedSummary)
 			break
 		}
