@@ -33,23 +33,35 @@ go build -o ab
 
 ## Output
 
-Each response is printed as it completes. When all requests finish, a JSON summary is printed:
+Each response is printed as it completes. When all requests finish (or the timelimit is reached), a JSON summary is printed:
 
 ```json
 {
     "Hostname": "example.com",
     "Port": "443",
     "DocumentPath": "https://example.com",
-    "DocumentLength": 19,
+    "DocumentLength": 648,
     "ConcurrencyLevel": 20,
     "TimeTaken": 3200000000,
     "CompletedRequests": 100,
     "FailedRequests": 0,
-    "TotalTransferred": 153600,
+    "TotalTransferred": 64800,
     "Rps": 31,
     "TimePerRequest": 32000000,
-    "TransferRate": 46
+    "TransferRate": 19
 }
 ```
 
-`TransferRate` is in KB/s. `TimeTaken` and `TimePerRequest` are in nanoseconds.
+- `TimeTaken` and `TimePerRequest` are in nanoseconds
+- `TransferRate` is in KB/s
+- `FailedRequests` counts requests that did not receive a response
+
+## Development
+
+```bash
+# Run tests
+go test ./...
+
+# Run a specific test
+go test -run TestCheckLinkSuccess
+```

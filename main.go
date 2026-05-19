@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 )
@@ -11,7 +13,7 @@ func main() {
 	requests := flag.Int64("n", 1, "Number of requests to perform")
 	concurrency := flag.Int64("c", 1, "Number of multiple requests to make at a time")
 	timeout := flag.Int64("s", 30, "Seconds to max. wait for each response")
-	timelimit := flag.Int64("t", 300, "Seconds to max. to spend on benchmarking")
+	timelimit := flag.Int64("t", 300, "Maximum seconds to spend benchmarking")
 	flag.Parse()
 
 	if flag.NArg() == 0 {
@@ -28,15 +30,13 @@ func main() {
 	}
 
 	if *requests < *concurrency {
-		fmt.Println("Number of requests cannot be less than number of concurency!")
+		fmt.Println("Number of requests cannot be less than number of concurrency!")
 		os.Exit(-1)
 	}
 
-	fmt.Println("requests :", *requests, requests)
-	fmt.Println("concurrency :", *concurrency, concurrency)
-	fmt.Println("timeout :", *timeout, timeout)
-	fmt.Println("timelimit :", *timelimit, timelimit)
-	fmt.Println()
+	client := &http.Client{Timeout: time.Duration(*timeout) * time.Second}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*timelimit)*time.Second)
+	defer cancel()
 
 	start := time.Now()
 	summary := summaryInfo{}
@@ -44,16 +44,20 @@ func main() {
 	link := flag.Arg(0)
 
 	for i := int64(0); i < *concurrency; i++ {
-		go checkLink(link, c)
+		go checkLink(ctx, client, link, c)
 		summary.Requested++
 	}
 
+	documentLength := int64(0)
 	totalTransferred := int64(0)
 	totalTimeAllRequests := time.Duration(0)
 	for response := range c {
 		if summary.Requested < *requests {
-			go checkLink(link, c)
+			go checkLink(ctx, client, link, c)
 			summary.Requested++
+		}
+		if documentLength == 0 && response.status == successfulCode {
+			documentLength = response.bytes
 		}
 		totalTransferred += response.bytes
 		totalTimeAllRequests += response.duration
@@ -61,8 +65,8 @@ func main() {
 		summary.Responded++
 
 		if summary.Requested == summary.Responded {
-			timeTaken := time.Now().Sub(start)
-			formattedSummary := createSummary(link, timeTaken, totalTransferred, totalTimeAllRequests, *concurrency, summary)
+			timeTaken := time.Since(start)
+			formattedSummary := createSummary(link, timeTaken, totalTransferred, totalTimeAllRequests, *concurrency, documentLength, summary)
 			fmt.Println(formattedSummary)
 			break
 		}
