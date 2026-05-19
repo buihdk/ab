@@ -1,35 +1,55 @@
 # ab
-https://httpd.apache.org/docs/2.4/programs/ab.html
 
-Run `./ab -n 100 -c 20 -s 1 -t 10 https://www.grab.com/vn`
+A Go implementation of the [Apache HTTP server benchmarking tool](https://httpd.apache.org/docs/2.4/programs/ab.html). Stress-test web servers with concurrent HTTP requests and get a performance summary.
 
-## Set of user stories
+## Installation
 
-### Required
-* [x] Command-line argument parsing
-* [x] Input params
-   * [x] Requests - Number of requests to perform
-   * [x] Concurrency - Number of multiple requests to make at a time
-   * [x] URL - The URL for testing
-* [x] The program prints usage information if the wrong arguments are provided.
-* [x] The program performs the specified HTTP requests and prints a summary of the results.
-* [x] The program’s concurrency is implemented with goroutines.
+```bash
+git clone https://github.com/buihdk/ab.git
+cd ab
+go build -o ab
+```
 
+## Usage
 
-### Bonus
-* [x] Extend input params with: 
-   * [x] Timeout - Seconds to max. wait for each response
-   * [x] Timelimit - Maximum number of seconds to spend for benchmarking
-* [ ] Prints key metrics of summary, such:
-   * [x] Server Hostname
-   * [x] Server Port
-   * [x] Document Path
-   * [x] Document Length
-   * [ ] Concurrency Level
-   * [x] Time taken for tests
-   * [x] Complete requests
-   * [x] Failed requests
-   * [x] Total transferred
-   * [ ] Requests per second
-   * [x] Time per request
-   * [ ] Transfer rate
+```bash
+./ab [options] <url>
+```
+
+### Options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-n` | 1 | Number of requests to perform |
+| `-c` | 1 | Number of concurrent requests at a time |
+| `-s` | 30 | Timeout in seconds per request |
+| `-t` | 300 | Maximum seconds to spend benchmarking |
+
+### Example
+
+```bash
+./ab -n 100 -c 20 -s 1 -t 10 https://example.com
+```
+
+## Output
+
+Each response is printed as it completes. When all requests finish, a JSON summary is printed:
+
+```json
+{
+    "Hostname": "example.com",
+    "Port": "443",
+    "DocumentPath": "https://example.com",
+    "DocumentLength": 19,
+    "ConcurrencyLevel": 20,
+    "TimeTaken": 3200000000,
+    "CompletedRequests": 100,
+    "FailedRequests": 0,
+    "TotalTransferred": 153600,
+    "Rps": 31,
+    "TimePerRequest": 32000000,
+    "TransferRate": 46
+}
+```
+
+`TransferRate` is in KB/s. `TimeTaken` and `TimePerRequest` are in nanoseconds.
