@@ -11,8 +11,9 @@ type responseInfo struct {
 }
 
 type summaryInfo struct {
-	Requested         int64
-	Responded         int64
+	Requested         int64 `json:"-"`
+	Responded         int64 `json:"-"`
+	Failed            int64 `json:"-"`
 	Hostname          string
 	Port              string
 	DocumentPath      string
@@ -21,8 +22,9 @@ type summaryInfo struct {
 	TimeTaken         time.Duration
 	CompletedRequests int64
 	FailedRequests    int64
+	Non2xxResponses   int64
 	TotalTransferred  int64
-	Rps               int64
+	Rps               float64
 	TimePerRequest    time.Duration
-	TransferRate      int64
+	TransferRate      float64
 }
