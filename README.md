@@ -45,16 +45,20 @@ Each response is printed as it completes. When all requests finish (or the timel
     "TimeTaken": 3200000000,
     "CompletedRequests": 100,
     "FailedRequests": 0,
+    "Non2xxResponses": 0,
     "TotalTransferred": 64800,
-    "Rps": 31,
+    "Rps": 31.25,
     "TimePerRequest": 32000000,
-    "TransferRate": 19
+    "TransferRate": 19.78
 }
 ```
 
 - `TimeTaken` and `TimePerRequest` are in nanoseconds
 - `TransferRate` is in KB/s
+- `Rps` and `TransferRate` are floats so slow endpoints do not round to zero
+- `CompletedRequests` counts requests that got a response
 - `FailedRequests` counts requests that did not receive a response
+- `Non2xxResponses` counts responses whose status was outside the 2xx range
 
 ## Development
 
@@ -65,3 +69,7 @@ go test ./...
 # Run a specific test
 go test -run TestCheckLinkSuccess
 ```
+
+## License
+
+Released under the [MIT License](LICENSE).

@@ -11,7 +11,7 @@ import (
 )
 
 func TestCreateSummaryFields(t *testing.T) {
-	summary := summaryInfo{Requested: 10, Responded: 9}
+	summary := summaryInfo{Requested: 10, Responded: 10, Failed: 1}
 	timeTaken := 3 * time.Second
 	totalTransferred := int64(30720) // 30 KB
 	totalTimeAllRequests := 27 * time.Second
@@ -41,11 +41,11 @@ func TestCreateSummaryFields(t *testing.T) {
 	if s.FailedRequests != 1 {
 		t.Errorf("FailedRequests: got %d, want %d", s.FailedRequests, 1)
 	}
-	if s.Rps != 3 { // 9 / 3s = 3
-		t.Errorf("Rps: got %d, want %d", s.Rps, 3)
+	if s.Rps != 3 { // 9 completed / 3s = 3
+		t.Errorf("Rps: got %g, want %g", s.Rps, 3.0)
 	}
 	if s.TransferRate != 10 { // 30720 / 3s / 1024 = 10 KB/s
-		t.Errorf("TransferRate: got %d, want %d", s.TransferRate, 10)
+		t.Errorf("TransferRate: got %g, want %g", s.TransferRate, 10.0)
 	}
 }
 

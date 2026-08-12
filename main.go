@@ -21,17 +21,22 @@ func main() {
 		fmt.Println("Usage: ab [options] [http[s]://]hostname[:port]/path")
 		fmt.Println("Example: ./ab -n 100 -c 20 -s 1 -t 10 https://www.grab.com/vn")
 		flag.PrintDefaults()
-		os.Exit(-1)
+		os.Exit(1)
 	}
 
-	if *requests == 0 {
-		fmt.Println("Number of requests cannot be zero!")
-		os.Exit(-1)
+	if *requests <= 0 {
+		fmt.Println("Number of requests must be greater than zero!")
+		os.Exit(1)
+	}
+
+	if *concurrency <= 0 {
+		fmt.Println("Number of concurrency must be greater than zero!")
+		os.Exit(1)
 	}
 
 	if *requests < *concurrency {
 		fmt.Println("Number of requests cannot be less than number of concurrency!")
-		os.Exit(-1)
+		os.Exit(1)
 	}
 
 	client := &http.Client{Timeout: time.Duration(*timeout) * time.Second}
@@ -56,13 +61,21 @@ func main() {
 			go checkLink(ctx, client, link, c)
 			summary.Requested++
 		}
-		if documentLength == 0 && response.status == successfulCode {
-			documentLength = response.bytes
-		}
-		totalTransferred += response.bytes
-		totalTimeAllRequests += response.duration
-		fmt.Println(response)
 		summary.Responded++
+
+		if response.status == errorCode {
+			summary.Failed++
+		} else {
+			if documentLength == 0 && response.status == successfulCode {
+				documentLength = response.bytes
+			}
+			if response.status < 200 || response.status >= 300 {
+				summary.Non2xxResponses++
+			}
+			totalTransferred += response.bytes
+			totalTimeAllRequests += response.duration
+		}
+		fmt.Println(response)
 
 		if summary.Requested == summary.Responded {
 			timeTaken := time.Since(start)
